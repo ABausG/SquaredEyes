@@ -1,0 +1,70 @@
+package es.antonborri.squaredeyes.data.room
+
+import androidx.room.TypeConverter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import es.antonborri.squaredeyes.data.model.tmdb.Genre
+import es.antonborri.squaredeyes.data.model.tmdb.ProductionCompany
+import es.antonborri.squaredeyes.data.model.tmdb.ProductionCountry
+import es.antonborri.squaredeyes.data.model.tmdb.SpokenLanguage
+
+class DBConverters {
+    private val moshi: Moshi = Moshi.Builder().build()
+
+
+    @TypeConverter
+    fun fromGenres(genres: List<Genre>): String {
+        val genreList = Types.newParameterizedType(List::class.java, Genre::class.java)
+        val genreListAdapter = moshi.adapter<List<Genre>>(genreList)
+        return genreListAdapter.toJson(genres)
+    }
+
+    @TypeConverter
+    fun toGenres(genres: String): List<Genre> {
+        val genreList = Types.newParameterizedType(List::class.java, Genre::class.java)
+        val genreListAdapter = moshi.adapter<List<Genre>>(genreList)
+        return genreListAdapter.fromJson(genres)!!
+    }
+
+    @TypeConverter
+    fun fromProductionCountries(productionCountries: List<ProductionCountry>): String {
+        val productionCountryList = Types.newParameterizedType(List::class.java, ProductionCountry::class.java)
+        val productionCountryListAdapter = moshi.adapter<List<ProductionCountry>>(productionCountryList)
+        return productionCountryListAdapter.toJson(productionCountries)
+    }
+
+    @TypeConverter
+    fun toProductionCountries(productionCountries: String): List<ProductionCountry> {
+        val productionCountryList = Types.newParameterizedType(List::class.java, ProductionCountry::class.java)
+        val productionCountryListAdapter = moshi.adapter<List<ProductionCountry>>(productionCountryList)
+        return productionCountryListAdapter.fromJson(productionCountries)!!
+    }
+
+    @TypeConverter
+    fun fromProductionCompanies(productionCompanies: List<ProductionCompany>): String {
+        val productionCompanyList = Types.newParameterizedType(List::class.java, ProductionCompany::class.java)
+        val productionCompanyListAdapter = moshi.adapter<List<ProductionCompany>>(productionCompanyList)
+        return productionCompanyListAdapter.toJson(productionCompanies)
+    }
+
+    @TypeConverter
+    fun toProductionCompanies(productionCompanies: String): List<ProductionCompany> {
+        val productionCompanyList = Types.newParameterizedType(List::class.java, ProductionCompany::class.java)
+        val productionCompanyListAdapter = moshi.adapter<List<ProductionCompany>>(productionCompanyList)
+        return productionCompanyListAdapter.fromJson(productionCompanies)!!
+    }
+
+    @TypeConverter
+    fun fromSpokenLanguages(spokenLanguages: List<SpokenLanguage>): String {
+        val spokenLanguageList = Types.newParameterizedType(List::class.java, SpokenLanguage::class.java)
+        val spokenLanguageListAdapter = moshi.adapter<List<SpokenLanguage>>(spokenLanguageList)
+        return spokenLanguageListAdapter.toJson(spokenLanguages)
+    }
+
+    @TypeConverter
+    fun toSpokenLanguages(spokenLanguages: String): List<SpokenLanguage> {
+        val spokenLanguageList = Types.newParameterizedType(List::class.java, SpokenLanguage::class.java)
+        val spokenLanguageListAdapter = moshi.adapter<List<SpokenLanguage>>(spokenLanguageList)
+        return spokenLanguageListAdapter.fromJson(spokenLanguages)!!
+    }
+}

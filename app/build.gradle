@@ -19,6 +19,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TRAKT_BASE_URL", secretsProperties['trakt_base_url'])
+        buildConfigField("String", "TRAKT_CLIENT_ID", secretsProperties['trakt_client_id'])
+        buildConfigField("String", "TRAKT_CLIENT_SECRET", secretsProperties['trakt_client_secret'])
+        buildConfigField("String", "TMDB_API_KEY", secretsProperties['tmdb_api_key'])
+        buildConfigField("String", "TMDB_BASE_URL", secretsProperties['tmdb_base_url'])
     }
     buildTypes {
         release {
@@ -59,4 +65,12 @@ dependencies {
 
     implementation "com.squareup.moshi:moshi-kotlin:1.5.0"
     implementation "com.squareup.moshi:moshi-adapters:1.5.0"
+
+    implementation "com.google.dagger:dagger-android:2.16"
+    kapt "com.google.dagger:dagger-compiler:2.16"
+    kapt "com.google.dagger:dagger-android-processor:2.16"
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
+
+    implementation 'com.google.android.material:material:1.0.0-rc02'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
