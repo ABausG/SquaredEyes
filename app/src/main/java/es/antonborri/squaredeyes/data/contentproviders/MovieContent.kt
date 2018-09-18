@@ -1,38 +1,34 @@
-package es.antonborri.squaredeyes.viewModel
+package es.antonborri.squaredeyes.data.contentproviders
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import es.antonborri.squaredeyes.data.model.PopularMovie
-import es.antonborri.squaredeyes.data.model.repository.MovieRepository
 import es.antonborri.squaredeyes.data.model.tmdb.TMDBMovie
+import es.antonborri.squaredeyes.data.model.trakt.TraktMovie
+import es.antonborri.squaredeyes.data.repository.MovieRepository
 import es.antonborri.squaredeyes.network.TraktApi
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(val traktApi: TraktApi, val movieRepository: MovieRepository) : ViewModel() {
+abstract class MovieContent(private val traktApi: TraktApi, private val movieRepository: MovieRepository) {
 
-    lateinit var traktPopularMovies: List<Int>
-    lateinit var tmdbPopularMovies: Array<TMDBMovie?>
+    private lateinit var traktResult: List<Int>
+    private lateinit var tmdbResult: Array<TMDBMovie?>
 
-    private var popularMovies: MutableLiveData<List<TMDBMovie>> = MutableLiveData()
+    private var resultLiveData: MutableLiveData<List<TMDBMovie>> = MutableLiveData()
 
+    fun data(): LiveData<List<TMDBMovie>> = resultLiveData
 
-    fun popularMovies(): LiveData<List<TMDBMovie>> = popularMovies
-
-    private var disposableObserver = object : DisposableObserver<List<PopularMovie>>() {
+    private var traktObserver = object : DisposableObserver<List<TraktMovie>>() {
         override fun onComplete() {}
 
-        override fun onNext(value: List<PopularMovie>) {
-            traktPopularMovies = value.map { it -> it.ids.tmdb }
-            tmdbPopularMovies = arrayOfNulls<TMDBMovie>(traktPopularMovies.size)
-            val list = value.map { movieRepository.getMovie(it.ids.tmdb) }
-            Observable.fromIterable(list)
+        override fun onNext(t: List<TraktMovie>) {
+            traktResult = t.map { it.ids.tmdb }
+            tmdbResult = arrayOfNulls(traktResult.size)
+            Observable.fromIterable(t.map { movieRepository.getMovie(it.ids.tmdb) })
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(TraktToTMDBParserObserver())
@@ -44,9 +40,7 @@ class HomeViewModel @Inject constructor(val traktApi: TraktApi, val movieReposit
     }
 
     private inner class TraktToTMDBParserObserver : DisposableObserver<Observable<TMDBMovie>>() {
-        override fun onComplete() {
-            //popularMovies.postValue(tmdbPopularMovies.toList().filterNotNull())
-        }
+        override fun onComplete() {}
 
         override fun onNext(t: Observable<TMDBMovie>) {
             t.subscribeOn(Schedulers.newThread())
@@ -61,26 +55,27 @@ class HomeViewModel @Inject constructor(val traktApi: TraktApi, val movieReposit
     }
 
     private inner class TMDBObserver : DisposableObserver<TMDBMovie>() {
-        override fun onComplete() {
-            Log.i("FINISHED", "Finished one movie")
-        }
+        override fun onComplete() {}
 
         override fun onNext(t: TMDBMovie) {
-            tmdbPopularMovies[traktPopularMovies.indexOf(t.id)] = t
-            popularMovies.postValue(tmdbPopularMovies.toList().filterNotNull())
+            tmdbResult[traktResult.indexOf(t.id)] = t
+            resultLiveData.postValue(tmdbResult.toList().filterNotNull())
         }
 
         override fun onError(e: Throwable) {
             Log.e("TMDB ERROR", e.message)
         }
-
     }
 
-    init {
-        traktApi.getPopularMovies()
+    /**
+     * Call this function in the Implementations init
+     */
+    fun observeTraktList(traktResultObservable: Observable<List<TraktMovie>>) {
+        traktResultObservable
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .debounce(600, TimeUnit.MILLISECONDS)
-                .subscribe(disposableObserver)
+                .subscribe(traktObserver)
     }
+
 }

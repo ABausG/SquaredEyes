@@ -6,10 +6,7 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import es.antonborri.squaredeyes.BuildConfig
-import es.antonborri.squaredeyes.network.TMDBApi
-import es.antonborri.squaredeyes.network.TMDBInterceptor
-import es.antonborri.squaredeyes.network.TraktApi
-import es.antonborri.squaredeyes.network.TraktInterceptor
+import es.antonborri.squaredeyes.network.*
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -28,6 +25,10 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+    @Provides
+    fun provideMoshiConverterFactory(moshi: Moshi) : MoshiConverterFactory = MoshiConverterFactory.create(moshi)
+
 
     @Provides
     @Singleton

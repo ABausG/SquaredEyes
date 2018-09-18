@@ -1,4 +1,4 @@
-package es.antonborri.squaredeyes.viewModel
+package es.antonborri.squaredeyes.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

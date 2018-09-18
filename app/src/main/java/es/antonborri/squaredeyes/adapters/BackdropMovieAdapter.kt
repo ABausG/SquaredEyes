@@ -8,14 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import es.antonborri.squaredeyes.R
-import es.antonborri.squaredeyes.data.model.repository.MovieRepository
 import es.antonborri.squaredeyes.data.model.tmdb.TMDBMovie
 import es.antonborri.squaredeyes.helpers.getTMDBBackdropPath
 import es.antonborri.squaredeyes.inflate
 import javax.inject.Inject
 
-class BackdropMovieAdapter @Inject constructor(val movieRepository: MovieRepository) : ListAdapter<TMDBMovie, BackdropMovieAdapter.MovieViewHolder>(MovieDiffCallback()) {
-
+class BackdropMovieAdapter @Inject constructor() : ListAdapter<TMDBMovie, BackdropMovieAdapter.MovieViewHolder>(MovieDiffCallback()) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder = MovieViewHolder(parent.inflate(R.layout.holder_movie))
@@ -27,7 +25,8 @@ class BackdropMovieAdapter @Inject constructor(val movieRepository: MovieReposit
 
         fun bind(movie: TMDBMovie) {
             view.findViewById<TextView>(R.id.movie_title).text = movie.title
-            Picasso.get().load(getTMDBBackdropPath(movie.backdropPath ?: "")).into(view.findViewById<ImageView>(R.id.movie_backdrop))
+            Picasso.get().load(getTMDBBackdropPath(movie.backdropPath
+                    ?: "")).into(view.findViewById<ImageView>(R.id.movie_backdrop))
         }
     }
 

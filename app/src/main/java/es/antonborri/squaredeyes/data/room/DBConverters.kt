@@ -3,10 +3,7 @@ package es.antonborri.squaredeyes.data.room
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import es.antonborri.squaredeyes.data.model.tmdb.Genre
-import es.antonborri.squaredeyes.data.model.tmdb.ProductionCompany
-import es.antonborri.squaredeyes.data.model.tmdb.ProductionCountry
-import es.antonborri.squaredeyes.data.model.tmdb.SpokenLanguage
+import es.antonborri.squaredeyes.data.model.tmdb.*
 
 class DBConverters {
     private val moshi: Moshi = Moshi.Builder().build()
@@ -67,4 +64,74 @@ class DBConverters {
         val spokenLanguageListAdapter = moshi.adapter<List<SpokenLanguage>>(spokenLanguageList)
         return spokenLanguageListAdapter.fromJson(spokenLanguages)!!
     }
+
+    @TypeConverter
+    fun fromLanguages(languages: List<String>): String {
+        val languageList = Types.newParameterizedType(List::class.java, String::class.java)
+        val languageListAdapter = moshi.adapter<List<String>>(languageList)
+        return languageListAdapter.toJson(languages)
+    }
+
+    @TypeConverter
+    fun toLanguages(languages: String): List<String> {
+        val languageList = Types.newParameterizedType(List::class.java, String::class.java)
+        val languageListAdapter = moshi.adapter<List<String>>(languageList)
+        return languageListAdapter.fromJson(languages)!!
+    }
+
+    @TypeConverter
+    fun fromNetworks(networks: List<Network>): String {
+        val networkList = Types.newParameterizedType(List::class.java, Network::class.java)
+        val networkListAdapter = moshi.adapter<List<Network>>(networkList)
+        return networkListAdapter.toJson(networks)
+    }
+
+    @TypeConverter
+    fun toNetworks(networks: String): List<Network> {
+        val networkList = Types.newParameterizedType(List::class.java, Network::class.java)
+        val networkListAdapter = moshi.adapter<List<Network>>(networkList)
+        return networkListAdapter.fromJson(networks)!!
+    }
+
+    @TypeConverter
+    fun fromLastEpisodeToAir(lastEpisodeToAir: LastEpisodeToAir): String {
+        val lastEpisodeToAirListAdapter = moshi.adapter<LastEpisodeToAir>(LastEpisodeToAir::class.java)
+        return lastEpisodeToAirListAdapter.toJson(lastEpisodeToAir)
+    }
+
+    @TypeConverter
+    fun toLastEpisodeToAir(lastEpisodeToAir: String): LastEpisodeToAir {
+        val lastEpisodeToAirListAdapter = moshi.adapter<LastEpisodeToAir>(LastEpisodeToAir::class.java)
+        return lastEpisodeToAirListAdapter.fromJson(lastEpisodeToAir)!!
+    }
+
+    @TypeConverter
+    fun fromCreatedBys(createdBys: List<CreatedBy>): String {
+        val createdByList = Types.newParameterizedType(List::class.java, CreatedBy::class.java)
+        val createdByListAdapter = moshi.adapter<List<CreatedBy>>(createdByList)
+        return createdByListAdapter.toJson(createdBys)
+    }
+
+    @TypeConverter
+    fun toCreatedBys(createdBys: String): List<CreatedBy> {
+        val createdByList = Types.newParameterizedType(List::class.java, CreatedBy::class.java)
+        val createdByListAdapter = moshi.adapter<List<CreatedBy>>(createdByList)
+        return createdByListAdapter.fromJson(createdBys)!!
+    }
+
+    @TypeConverter
+    fun fromSeasons(seasons: List<Season>): String {
+        val seasonList = Types.newParameterizedType(List::class.java, Season::class.java)
+        val seasonListAdapter = moshi.adapter<List<Season>>(seasonList)
+        return seasonListAdapter.toJson(seasons)
+    }
+
+    @TypeConverter
+    fun toSeasons(seasons: String): List<Season> {
+        val seasonList = Types.newParameterizedType(List::class.java, Season::class.java)
+        val seasonListAdapter = moshi.adapter<List<Season>>(seasonList)
+        return seasonListAdapter.fromJson(seasons)!!
+    }
+    
+    
 }

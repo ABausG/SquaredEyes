@@ -1,8 +1,6 @@
-package es.antonborri.squaredeyes.data.model.repository
+package es.antonborri.squaredeyes.data.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import es.antonborri.squaredeyes.data.model.tmdb.TMDBMovie
 import es.antonborri.squaredeyes.data.room.MovieDao
 import es.antonborri.squaredeyes.network.TMDBApi
@@ -13,8 +11,8 @@ class MovieRepository @Inject constructor(val tmdbApi: TMDBApi, val movieDao: Mo
 
     fun getMovie(id : Int) : Observable<TMDBMovie> {
         val observableFromApi = getMovieFromApi(id)
-        val observaleFromDb = getMovieFromDb(id)
-        return Observable.concatArrayEager(observableFromApi, observaleFromDb)
+        val observableFromDb = getMovieFromDb(id)
+        return Observable.concatArrayEager(observableFromApi, observableFromDb)
     }
 
     private fun getMovieFromApi(id : Int): Observable<TMDBMovie> {
@@ -25,10 +23,9 @@ class MovieRepository @Inject constructor(val tmdbApi: TMDBApi, val movieDao: Mo
     }
 
     private fun getMovieFromDb(id : Int): Observable<TMDBMovie> {
-        return movieDao.getMovie(id)
-                .doOnNext {
-                    Log.i("MOVIE FROM DATABASE", it.originalTitle)
-                }
+        return movieDao.getMovie(id).doOnNext {
+            Log.i("MOVIE FROM DB", it.title)
+        }
     }
 
 }

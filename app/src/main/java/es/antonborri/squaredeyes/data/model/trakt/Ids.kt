@@ -1,4 +1,4 @@
-package es.antonborri.squaredeyes.data.model
+package es.antonborri.squaredeyes.data.model.trakt
 
 import com.squareup.moshi.Json
 
