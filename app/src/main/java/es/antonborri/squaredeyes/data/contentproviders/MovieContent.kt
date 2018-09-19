@@ -22,13 +22,13 @@ abstract class MovieContent(private val traktApi: TraktApi, private val movieRep
 
     fun data(): LiveData<List<TMDBMovie>> = resultLiveData
 
-    private var traktObserver = object : DisposableObserver<List<TraktMovie>>() {
+    private var traktObserver = object : DisposableObserver<List<Any>>() {
         override fun onComplete() {}
 
-        override fun onNext(t: List<TraktMovie>) {
-            traktResult = t.map { it.ids.tmdb }
+        override fun onNext(t: List<Any>) {
+            traktResult = mapResultToIMDBIds(t)
             tmdbResult = arrayOfNulls(traktResult.size)
-            Observable.fromIterable(t.map { movieRepository.getMovie(it.ids.tmdb) })
+            Observable.fromIterable(mapResultToIMDBIds(t).map { movieRepository.getMovie(it) })
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(TraktToTMDBParserObserver())
@@ -38,6 +38,8 @@ abstract class MovieContent(private val traktApi: TraktApi, private val movieRep
             Log.e("TRAKT ERROR", e.message)
         }
     }
+
+    abstract fun mapResultToIMDBIds(result: List<Any>) : List<Int>
 
     private inner class TraktToTMDBParserObserver : DisposableObserver<Observable<TMDBMovie>>() {
         override fun onComplete() {}
@@ -70,7 +72,7 @@ abstract class MovieContent(private val traktApi: TraktApi, private val movieRep
     /**
      * Call this function in the Implementations init
      */
-    fun observeTraktList(traktResultObservable: Observable<List<TraktMovie>>) {
+    fun observeTraktList(traktResultObservable: Observable<List<Any>>) {
         traktResultObservable
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

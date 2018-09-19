@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import es.antonborri.squaredeyes.data.model.tmdb.TMDBShow
-import es.antonborri.squaredeyes.data.model.trakt.Ids
-import es.antonborri.squaredeyes.data.model.trakt.TraktShow
 import es.antonborri.squaredeyes.data.repository.ShowRepository
 import es.antonborri.squaredeyes.network.TraktApi
 import io.reactivex.Observable
@@ -27,9 +25,9 @@ abstract class ShowContent(private val traktApi: TraktApi, private val showRepos
         override fun onComplete() {}
 
         override fun onNext(t: List<Any>) {
-            traktResult = mapTraktResultToIds(t)
+            traktResult = mapResultToIMDBIds(t)
             tmdbResult = arrayOfNulls(traktResult.size)
-            Observable.fromIterable(mapTraktResultToIds(t).map { showRepository.getShow(it)})
+            Observable.fromIterable(mapResultToIMDBIds(t).map { showRepository.getShow(it)})
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(TraktToTMDBParserObserver())
@@ -40,7 +38,7 @@ abstract class ShowContent(private val traktApi: TraktApi, private val showRepos
         }
     }
 
-    abstract fun mapTraktResultToIds(traktResult: List<Any>) : List<Int>
+    abstract fun mapResultToIMDBIds(result: List<Any>) : List<Int>
 
     private inner class TraktToTMDBParserObserver : DisposableObserver<Observable<TMDBShow>>() {
         override fun onComplete() {}
